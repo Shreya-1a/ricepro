@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-page">
+    <div class="container-fluid add-form-list">
+       <div class="row">
+           <div class="col-sm-12">
+               <div class="card">
+                   <div class="card-header d-flex justify-content-between">
+                       <div class="header-title">
+                           <h4 class="card-title">Add Brand</h4>
+                       </div>
+                   </div>
+                   <div class="card-body">
+                       <form action="" data-toggle="validator">
+                           <div class="row">
+                               <div class="col-md-12">
+                                   <div class="form-group">
+                                       <label>Category *</label>
+                                       <select name="type" class="selectpicker form-control" data-style="py-0" id="category_id" onchange="getproduct()">
+                                           <option value="" selected disabled>Select Category</option>
+                                           {% for obj in category %}
+                                           <option value={{obj.category_id}}>{{obj.category_name}}</option>
+                                           {% endfor %}
+                                       </select>
+                                   </div> 
+                               </div>  
+                               <div class="col-md-12">
+                                   <div class="form-group">
+                                       <label>Product *</label>
+                                       <select name="type" class="selectpicker form-control" data-style="py-0" id="product_id" onchange="">
+                                           <option value="" selected disabled>Select Product</option>
+                                           {% for obj in product %}
+                                           <option value={{obj.product_id}}>{{obj.product_name}}</option>
+                                           {% endfor %}
+                                       </select>
+                                   </div> 
+                               </div>  
+                               
+                               <div class="col-md-12">                                    
+                                   <div class="form-group">
+                                       <label>Brand Name *</label>
+                                       <input type="text" class="form-control" id="brand_name" placeholder="Enter Brand Name" required>
+                                       <div class="help-block with-errors"></div>
+                                   </div>
+                               </div>
+                           </div>                            
+                           <input type="button" class="btn btn-primary mr-2" id="brand_action" value="Add Brand">
+                           {% comment %} <button type="reset" class="btn btn-danger">Reset</button> {% endcomment %}
+                       </form>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $("#brand_action").click(function(){
+            var category_id = $('#category_id').val();
+            var product_id = $('#product_id').val();
+            var brand_name = $('#brand_name').val();
+            
+            $.ajax({
+                url:"/add_brand",
+                type : "POST",
+                data : {category_id:category_id,product_id : product_id,brand_name:brand_name},
+                success : function(result)
+                {
+                    console.log("result ***: ",result);
+                    alert("brand added");
+                    window.location.href = "/brandListView";
+                }
+        
+            });
+        
+        });
+        function getproduct(){
+            $('#product_id')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option value="null" selected disabled>select product </option>')
+            .val('null');
+            category_id=document.getElementById('category_id').value;
+            '{% for obj in product %}'
+            if('{{obj.category.category_id}}'==category_id)
+            {
+                $('#product_id')
+                .find('option')
+                .end()
+                .append('<option value="'+'{{obj.product_id}}'+'">'+'{{obj.product_name}}'+'</option>')
+            }
+            '{% endfor %}'
+        }
+        
+    });
+</script> 
+
+       {% endblock content %}
